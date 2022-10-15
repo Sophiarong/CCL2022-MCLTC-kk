@@ -101,17 +101,17 @@ def main(cfg: FairseqConfig) -> None:
     # Print args
     logger.info(cfg)
 
-    experiment_name = "{}-{}-{}".format(
-        cfg.common.seed,
-        cfg.dataset.max_tokens,
-        str(int(time.time())),
-    )
-    logger.info("Set wandb")
-    wandb.init(
-        project="hr-gec",
-        name=experiment_name,
-        entity='jinhao-jiang',
-    )
+    # experiment_name = "{}-{}-{}".format(
+    #     cfg.common.seed,
+    #     cfg.dataset.max_tokens,
+    #     str(int(time.time())),
+    # )
+    # logger.info("Set wandb")
+    # wandb.init(
+    #     project="hr-gec",
+    #     name=experiment_name,
+    #     entity='jinhao-jiang',
+    # )
 
     if cfg.checkpoint.write_checkpoints_asynchronously:
         try:
@@ -369,72 +369,47 @@ def train(
     num_updates = trainer.get_num_updates()
     logger.info("Start iterating over samples")
     for i, samples in enumerate(progress):
-        # for sample in samples:
-        #     for i in range(len(sample['net_input']['src_tokens'])):
-        #         for j in range(len(sample['net_input']['src_tokens'][0])):
-        #             print(str(sample['net_input']['src_tokens'][i][j]), end=" ")
-        #         print('\n\n\n')
+        for sample in samples:
+            for i in range(len(sample['net_input']['src_tokens'])):
+                for j in range(len(sample['net_input']['src_tokens'][0])):
+                    print(str(sample['net_input']['src_tokens'][i][j]), end=" ")
+                print('\n\n\n')
 
-        # for sample in samples:
-        #     #挑出要被改错的句子序号
-        #     all_index = [i for i in range(len(sample['net_input']['src_tokens']))]
-        #     change_select = random.sample(all_index, int(len(all_index)*0.1))
-        #     change_select.sort()
-        #
-        #     scheme_select = [random.randint(1, 1) for i in range(len(change_select))]
-        #     # pad_mask_or_at = [random.randint(0, 1) for i in range(len(change_select))]
-        #     pad_mask = torch.where(sample['net_input']['src_tokens'] == 0, 0, 1)
-        #
-        #     #某一概率下部分加噪
-        #     for sidx, s in zip(change_select, scheme_select):
-        #         index_102 = (sample['net_input']['src_tokens'][sidx] == 102).nonzero(as_tuple=True)[0].tolist()
-        #         sentence_len = sample['net_input']['src_lengths'][sidx]
-        #         if sentence_len > 4:
-        #             token_index = [i for i in range(1, sentence_len)]
-        #             token_change = random.sample(token_index, 4)
-        #
-        #             for token in token_change:
-        #                 if token not in index_102:
-        #                     if s == 0:
-        #                         replace_token = 1
-        #                     elif s == 1:
-        #                         replace_token = list(WeightedRandomSampler(list_chtarget, 1, replacement=True))[0]
-        #                     elif s == 2:
-        #                         replace_token = list(WeightedRandomSampler(list_tfidf, 1, replacement=True))[0]
-        #                     elif s == 3:
-        #                         replace_token = list(WeightedRandomSampler(list_pyfreq, 1, replacement=True))[0]
-        #                     elif s == 4:
-        #                         replace_token = list(WeightedRandomSampler(list_chfreq, 1, replacement=True))[0]
-        #                     elif s == 5:
-        #                         replace_token = list(WeightedRandomSampler(list_all, 1, replacement=True))[0]
-        #                     else:
-        #                         continue
-        #                     sample['net_input']['src_tokens'][sidx][token] = replace_token
+        for sample in samples:
+            #挑出要被改错的句子序号
+            all_index = [i for i in range(len(sample['net_input']['src_tokens']))]
+            change_select = random.sample(all_index, int(len(all_index)*0.1))
+            change_select.sort()
 
-            # #某一概率下全部加噪
-            # select_tensor = torch.randint(0, 99, size=sample['net_input']['src_tokens'].size())
-            # select_tensor[:, 0] = 31
-            # #类型指定，randint(0,0)就是pad，(1,1)就是random
-            # scheme_select = [random.randint(0,4) for i in range(len(sample['net_input']['src_tokens']))]
-            # pad_mask = torch.where(sample['net_input']['src_tokens'] == 0, 0, 1)
-            # # 改一下总体概率
-            # select_mask_1 = torch.where(select_tensor < 10, 1, 0) * pad_mask  # 需要被替换的地方为1
-            # for sidx, s in enumerate(scheme_select):
-            #     index_102 = (sample['net_input']['src_tokens'][sidx] == 102).nonzero(as_tuple=True)[0].tolist()
-            #     index_1 = (select_mask_1[sidx] == 1).nonzero(as_tuple=True)[0].tolist()
-            #     for tidx in index_1:
-            #         if tidx not in index_102:
-            #             if s == 0:
-            #                 replace_token = 0
-            #             elif s == 1:
-            #                 replace_token = list(WeightedRandomSampler(list_chtarget, 1, replacement=True))[0]
-            #             elif s == 2:
-            #                 replace_token = list(WeightedRandomSampler(list_chfreq, 1, replacement=True))[0]
-            #             elif s == 3:
-            #                 replace_token = list(WeightedRandomSampler(list_pyfreq, 1, replacement=True))[0]
-            #             else:
-            #                 continue
-            #             sample['net_input']['src_tokens'][sidx][tidx] = replace_token
+            scheme_select = [random.randint(1, 1) for i in range(len(change_select))]
+            # pad_mask_or_at = [random.randint(0, 1) for i in range(len(change_select))]
+            pad_mask = torch.where(sample['net_input']['src_tokens'] == 0, 0, 1)
+
+            #某一概率下部分加噪
+            for sidx, s in zip(change_select, scheme_select):
+                index_102 = (sample['net_input']['src_tokens'][sidx] == 102).nonzero(as_tuple=True)[0].tolist()
+                sentence_len = sample['net_input']['src_lengths'][sidx]
+                if sentence_len > 4:
+                    token_index = [i for i in range(1, sentence_len)]
+                    token_change = random.sample(token_index, 4)
+
+                    for token in token_change:
+                        if token not in index_102:
+                            if s == 0:
+                                replace_token = 1
+                            elif s == 1:
+                                replace_token = list(WeightedRandomSampler(list_chtarget, 1, replacement=True))[0]
+                            elif s == 2:
+                                replace_token = list(WeightedRandomSampler(list_tfidf, 1, replacement=True))[0]
+                            elif s == 3:
+                                replace_token = list(WeightedRandomSampler(list_pyfreq, 1, replacement=True))[0]
+                            elif s == 4:
+                                replace_token = list(WeightedRandomSampler(list_chfreq, 1, replacement=True))[0]
+                            elif s == 5:
+                                replace_token = list(WeightedRandomSampler(list_all, 1, replacement=True))[0]
+                            else:
+                                continue
+                            sample['net_input']['src_tokens'][sidx][token] = replace_token
 
         with metrics.aggregate("train_inner"), torch.autograd.profiler.record_function(
             "train_step-%d" % i
@@ -443,7 +418,7 @@ def train(
 
         if log_output is not None:  # not OOM, overflow, ...
             # log mid-epoch stats
-            state.record_each_step(loss=log_output['loss'], nll_loss=log_output['nll_loss'])
+            # state.record_each_step(loss=log_output['loss'], nll_loss=log_output['nll_loss'])
             num_updates = trainer.get_num_updates()
             if num_updates % cfg.common.log_interval == 0:
                 stats = get_training_stats(metrics.get_smoothed_values("train_inner"))
@@ -661,7 +636,7 @@ def inferdev_and_save(
         start_id = 0
         with open(save_file, 'a',
                   encoding='utf-8') as w:
-            cfg.interactive.input = '.../valid_fluency_test.src'
+            cfg.interactive.input = '...'#'...'请填写分好词的验证集的src的路径
             for inputs in buffered_read(cfg.interactive.input, cfg.interactive.buffer_size):
                 results = []
                 for batch in make_batches(inputs, cfg, task, max_positions, encode_fn):
@@ -770,16 +745,16 @@ def inferdev_and_save(
         save_file_path = save_file.replace('.para', '_final.para')
         with open(save_file_path, 'w', encoding='utf8') as w:
             with open(save_file, 'r', encoding='utf8') as res:
-                with open('/.../yaclc-fluence_dev_astest.src', 'r', encoding='utf8') as test:
+                with open('...', 'r', encoding='utf8') as test:#'...'请填写分好词的验证集的src的路径
                     for src, res in zip(test, res):
                         src = src.strip()
                         res = res.strip()
                         id_, _, tgt_ = res.split('\t')
                         w.write(str(id_) + '\t' + src + '\t' + tgt_ + '\n')
-        f_flu = evaluate(save_file_path, "/.../yaclc-fluency_dev.m2", cfg)
-        f_min = evaluate(save_file_path, "/...yaclc-minimal_dev.m2", cfg)
+        f_flu = evaluate(save_file_path, "/.../yaclc-fluency_dev.m2", cfg)#请填写fluency验证集的m2文件的路径
+        f_min = evaluate(save_file_path, "/.../yaclc-minimal_dev.m2", cfg)#请填写minimal验证集的m2文件的路径
         valid_losses, stats = validate(cfg, trainer, task, epoch_itr, valid_subsets)
-        state.record_each_step(f_flu=f_flu, f_min=f_min, valid_loss=valid_losses, valid_ppl=stats['ppl'])
+        # state.record_each_step(f_flu=f_flu, f_min=f_min, valid_loss=valid_losses, valid_ppl=stats['ppl'])
 
     should_stop |= should_stop_early(cfg, f_flu)
 

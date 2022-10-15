@@ -70,13 +70,16 @@ data
     └── preprocess.log
 ```
 ## 4. 模型训练
-
-- 第一阶段训练使用 `train.sh` 脚本。
-- 第二阶段训练同样使用`train.sh` 脚本，但是需要添加finetune参数。
-- train.py中存在少量读取文件的常量（主要是在F0.5的计算阶段，模型希望能够在每轮训练结束后得到F0.5,以此为标准挑选checkpoint)，未来得及优化（尴尬挠头），请谨慎避坑。
-- train.py中372行的大段注释用于第一阶段的官方训练集动态加噪，需要在第二阶段训练过程中关闭。
-
-## 5. 模型融合与模型后处理
+### 第一阶段训练
+- 请注意`train.py`中 `line639、line748、line754、line755`的代码注释。
+- 第一阶段训练使用`train.sh`脚本。
+- 本阶段使用了dynamic mask，所以第一阶段训练过后的最优模型具有较大随机性。
+### 第二阶段训练
+- 请注释`train.py`中388行-412行，关闭动态加噪。
+- 请注意`train.py`中 `line639、line748、line754、line755`的代码注释。
+- 第二阶段训练同样使用`train.sh`脚本，注意更改DATA_DIR、MODEL_NAME，并添加finetune参数。
+## 5. 模型推理
+## 6. 模型融合与后处理
 - 首先使用脚本 `interactive.sh`获得推断结果。
 - sh文件中的DATA_SET是个无效参数，实际输入在interactive.py中的常量。
 - 需要注意，seq2seq模型天然存在unk问题，即使经过文件拼接处理，interactive完成后也只能得到src(无unk)-tgt(有unk)的para文件。
