@@ -68,7 +68,7 @@ data
     ├── valid.src-tgt.tgt.bin
     ├── valid.src-tgt.tgt.idx  
     └── preprocess.log
-
+```
 ## 4. 模型训练
 
 - 第一阶段训练使用 `train.sh` 脚本。
