@@ -1,8 +1,7 @@
 #! /usr/bin
-export CUDA_VISIBLE_DEVICES=1
+export CUDA_VISIBLE_DEVICES=0
 
 DATA_SET=data/processed
-MODEL_PATH=/.../bart-baseline
 
 python interactive.py $DATA_SET \
     --user-dir bart-zh \

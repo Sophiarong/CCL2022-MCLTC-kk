@@ -75,14 +75,14 @@ data
 - 第一阶段训练使用`train.sh`脚本。
 - 本阶段使用了dynamic mask，所以第一阶段训练所能得到的最优模型具有较大随机性。
 ### 第二阶段训练
-- 请注释`train.py`中`line388-line412`，关闭动态加噪。
+- 该阶段必须注释`train.py`中`line388-line412`，关闭动态加噪。
 - 请注意`train.py`中 `line639、line748、line754、line755`的代码注释。
 - 第二阶段训练同样使用`train.sh`脚本，注意更改DATA_DIR、MODEL_NAME，并添加finetune参数。
 ## 5. 模型推理
+- 请注意`interactive.py`中 `line208、line209、line211、line302、line303、line304`的代码注释。
+- 推理使用`interactive.sh`脚本，请修改path参数（sh文件中的DATA_SET是个无效参数，可以无视）。
+- 另外，seq2seq模型天然存在unk问题，即使经过文件拼接处理，interactive完成后也只能得到src(无unk)-tgt(有unk)的para文件。
 ## 6. 模型融合与后处理
-- 首先使用脚本 `interactive.sh`获得推断结果。
-- sh文件中的DATA_SET是个无效参数，实际输入在interactive.py中的常量。
-- 需要注意，seq2seq模型天然存在unk问题，即使经过文件拼接处理，interactive完成后也只能得到src(无unk)-tgt(有unk)的para文件。
 - 为彻底去除unk问题，需要使用ChERRANT[^1]计算编辑距离，并将所有包括unk的编辑操作忽略，使用详情可参考文献。
 - 在本次比赛中，F0.5作为最终评价指标放大了Precision的比重，所以在做模型融合时，使用了三个非常相似的模型（挑选出第一阶段结束后性能最好的模型，第二阶段分别用minimal验证集、fluency验证集、minimal+fluency验证集训练得到三个模型），将三个模型的编辑操作提取出来，只有三个模型同时出现该编辑操作时，编辑操作才会被最终采纳。
 

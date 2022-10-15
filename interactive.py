@@ -205,10 +205,10 @@ def main(cfg: FairseqConfig):
     logger.info("Type the input sentence and press return:")
     start_id = 0
 
-    fom = 'fluency'
+    fom = 'fluency' #fluency or minimal，预测的是fluency还是minimal
     with open(f'.../yaclc-{fom}_testB.unk.para', 'a',
-              encoding='utf-8') as w:
-        cfg.interactive.input = f'.../yaclc-{fom}_testB.src'
+              encoding='utf-8') as w: # '...'填写预测结果存储的文件夹，unk.para指的是src和tgt都存在unk标识符的平行文本句对
+        cfg.interactive.input = f'.../yaclc-{fom}_testB.src'  #此处输入的是分好词的testB的src
         for inputs in buffered_read(cfg.interactive.input, cfg.interactive.buffer_size):
             results = []
             for batch in make_batches(inputs, cfg, task, max_positions, encode_fn):
@@ -299,9 +299,9 @@ def main(cfg: FairseqConfig):
         )
     )
 
-    with open(f'.../yaclc-{fom}_testB.unk.para', 'r', encoding='utf8') as r1:
-        with open(f".../yaclc-{fom}_testB.src", 'r', encoding='utf8') as r2:
-            with open(f'.../yaclc-{fom}_testB.tgtunk.para', 'w', encoding='utf8') as w:
+    with open(f'.../yaclc-{fom}_testB.unk.para', 'r', encoding='utf8') as r1: #r1是刚刚预测并保存好的平行文本句对
+        with open(f".../yaclc-{fom}_testB.src", 'r', encoding='utf8') as r2: #r2是不包含unk的testB的src
+            with open(f'.../yaclc-{fom}_testB.tgtunk.para', 'w', encoding='utf8') as w: #w是进一步处理过后，src中不包含unk、但tgt包含unk的平行文本句对
                 for line1, line2 in zip(r1, r2):
                     line1 = line1.strip()
                     line2 = line2.strip()
