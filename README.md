@@ -4,6 +4,8 @@
 
 比赛详情见https://github.com/blcuicall/CCL2022-CLTC
 
+模型及过程处理数据文件可参考https://drive.google.com/drive/folders/1M0san4HctiKVeuVRHcSH3vGGvaPgkWNp?usp=sharing
+
 ## 1. 环境配置
 
 - 训练推理阶段：requirements_train.txt
