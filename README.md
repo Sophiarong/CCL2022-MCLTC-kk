@@ -6,18 +6,8 @@
 
 ## 1. 环境配置
 
-- pytorch >= 1.8.0
-- fariseq
-
-```shell
-git clone https://github.com/pytorch/fairseq
-cd fairseq
-git reset --hard 06c65c82973969
-pip install --editable ./
-```
-
-- transformers >= 4.7.0
-- apex (optional)
+- 训练推理阶段：requirements_train.txt
+- 后处理及模型融合阶段：requirements_postedit.txt
 
 ## 2. 预训练模型下载
 
