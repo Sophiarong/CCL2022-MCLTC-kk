@@ -103,7 +103,7 @@ Stage2_FAM_minimal.tgtunk.para     Stage2_FAM_fluency.tgtunk.para
 - 参照`/chERRANT/ensemble`对单模和多模情况分开处理
 - 参照`/chERRANT/m22para`将m2文件转换为最终提交的para文件
 
-###最终单模结果
+### 最终单模结果
 
 |            | avg_F0.5 | minimal_F0.5 | minimal_recall | minimal_precision | fluency_F0.5 | fluency_recall | fluency_precision |
 | ---------- | -------- | ------------ | -------------- | ----------------- | ------------ | -------------- | ----------------- |
