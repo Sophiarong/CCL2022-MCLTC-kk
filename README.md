@@ -83,9 +83,31 @@ data
 - 推理使用`interactive.sh`脚本，请修改path参数（sh文件中的DATA_SET是个无效参数，可以无视）。
 - 另外，seq2seq模型天然存在unk问题，即使经过文件拼接处理，interactive完成后也只能得到src(无unk)-tgt(有unk)的para文件。
 ## 6. 模型融合与后处理
-- 为彻底去除unk问题，需要使用ChERRANT[^1]计算编辑距离，并将所有包括unk的编辑操作忽略，使用详情可参考文献。
-- 在本次比赛中，F0.5作为最终评价指标放大了Precision的比重，所以在做模型融合时，使用了三个非常相似的模型（挑选出第一阶段结束后性能最好的模型，第二阶段分别用minimal验证集、fluency验证集、minimal+fluency验证集训练得到三个模型），将三个模型的编辑操作提取出来，只有三个模型同时出现该编辑操作时，编辑操作才会被最终采纳。
+为彻底去除unk问题，需要使用ChERRANT[^1]计算编辑距离，并将所有包括unk的编辑操作忽略，使用详情可参考文献。
 
+在本次比赛中，F0.5作为最终评价指标放大了Precision的比重，所以在做模型融合时，使用了三个非常相似的模型（挑选出第一阶段结束后性能最好的模型，第二阶段分别用minimal验证集、fluency验证集、minimal+fluency验证集训练得到三个模型），将三个模型的编辑操作提取出来，只有三个模型同时出现该编辑操作时，编辑操作才会被最终采纳。
+具体步骤如下：
+- 假设目前得到六个（3*2）模型，并通过六个模型得到六份预测结果
+```
+Stage2_Min_bestminimal      Stage2_Min_bestfluency
+Stage2_Flu_bestminimal      Stage2_Flu_bestfluency
+Stage2_FAM_bestminimal      Stage2_FAM_bestfluency
+```
+
+```
+Stage2_Min_minimal.tgtunk.para     Stage2_Min_fluency.tgtunk.para
+Stage2_Flu_minimal.tgtunk.para     Stage2_Flu_fluency.tgtunk.para
+Stage2_FAM_minimal.tgtunk.para     Stage2_FAM_fluency.tgtunk.para
+```
+- 参照`/chERRANT/para2m2`将六份para文件转换为六份m2文件
+- 参照`/chERRANT/ensemble`对单模和多模情况分开处理
+- 参照`/chERRANT/m22para`将m2文件转换为最终提交的para文件
+
+###最终单模结果
+
+|            | avg_F0.5 | minimal_F0.5 | minimal_recall | minimal_precision | fluency_F0.5 | fluency_recall | fluency_precision |
+| ---------- | -------- | ------------ | -------------- | ----------------- | ------------ | -------------- | ----------------- |
+| Stage2_FAM | 55.68    | 70.84        | 54.61          | 76.53             | 40.52        | 24.26          | 48.67             |
 
 
 [^1]: Yue Zhang, Zhenghua Li, Zuyi Bao, Jiacheng Li, Bo Zhang, Chen Li, Fei Huang, and Min Zhang. 2022. MuCGEC: a Multi-Reference Multi-Source Evaluation Dataset for Chinese Grammatical Error Correction. In Proceedings of NAACL-HLT. ([pdf](https://arxiv.org/pdf/2204.10994.pdf))
