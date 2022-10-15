@@ -1,0 +1,11 @@
+python preprocess.py \
+--user-dir bart-zh\
+--task translation_hf_bart\
+--source-lang src\
+--target-lang tgt\
+--trainpref /home/GEC/CLTC/data/bpe/train_lang8\
+--validpref /home/GEC/CLTC/data/bpe/trian_valid\
+--destdir /home/GEC/CLTC/data/lang8\
+--srcdict /mnt/hg_face/bart-large-chinese/dict.txt\
+--tgtdict /mnt/hg_face/bart-large-chinese/dict.txt\
+--workers 20

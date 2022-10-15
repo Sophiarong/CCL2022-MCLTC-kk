@@ -11,31 +11,62 @@
 
 ## 2. 预训练模型下载
 
-将预训练模型放到 `pretrained-models/` 目录下，需要的模型为：
+将预训练模型下载到服务器上，并更新各种可执行文件夹中的BART_DIR变量：
 
 - bart-large-chinese: https://huggingface.co/fnlp/bart-large-chinese
 
 ## 3. 数据预处理
 
 训练和验证数据需分别处理成 `.src`  和 `.tgt` 两个文件并放在 `data/raw` 目录下，目录结构如：
-
-```
-data
-  └── raw
-    ├── train.src
-    ├── train.tgt
-    ├── valid.src
-    └── valid.tgt
-  ├── bpe
-  └── processed
-```
-
-然后运行 `data_process.sh` 进行数据预处理，预处理后的数据放在 `data/raw/processed` 中。
-
 注意：由于参赛过程中使用了两阶段训练，所以有多份训练集和验证集，详情可见技术评测报告。
 - 第一阶段训练集是官方训练集，第一阶段验证集是官方验证集。
 - 第二阶段以9:1的比例分割官方验证集，分别作为第二阶段训练集和验证集。
 - 两个训练阶段都以平均F0.5作为模型挑选标准。
+
+```
+data
+  └── raw
+    ├── train_lang8.src #第一阶段训练集和验证集
+    ├── train_lang8.tgt
+    ├── valid_lang8.src
+    ├── valid_lang8.tgt
+    ├── train_vminimal.src #第二阶段训练集和验证集1（使用minimal维度语料）
+    ├── train_vminimal.tgt
+    ├── valid_vminimal.src
+    ├── valid_vminimal.tgt
+    ├── train_vfluency.src #第二阶段训练集和验证集2（使用fluency维度语料）
+    ├── train_vfluency.tgt
+    ├── valid_vfluency.src
+    ├── valid_vfluency.tgt
+    ├── train_vfluandmin.src #第二阶段训练集和验证集3（混合minimal维度和fluency维度语料）
+    ├── train_vfluandmin.tgt
+    ├── valid_vfluandmin.src
+    └── valid_vfluandmin.tgt
+  ├── bpe
+  ├── lang8
+  ├── vminimal
+  ├── vfluency
+  └── vfluandmin
+```
+首先参照`bpe_kk.sh`的示例进行分词，将`data/raw/`的文件中全部分词并生成对应文件。
+其次参考`process_kk.sh`的示例进行二值化处理，将`data/bpe/`全部处理并放置到对应文件夹中。
+每个文件夹的目录结构如下,以`data/lang8/`为例：
+```
+data
+  ├── raw
+  ├── bpe
+  └── lang8
+    ├── dict.src.txt
+    ├── dict.tgt.txt
+    ├── train.src-tgt.src.bin
+    ├── train.src-tgt.src.idx
+    ├── train.src-tgt.tgt.bin
+    ├── train.src-tgt.tgt.idx
+    ├── valid.src-tgt.src.bin
+    ├── valid.src-tgt.src.idx  
+    ├── valid.src-tgt.tgt.bin
+    ├── valid.src-tgt.tgt.idx  
+    └── preprocess.log
 
 ## 4. 模型训练
 
