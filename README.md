@@ -73,7 +73,7 @@ data
 ### 第一阶段训练
 - 请注意`train.py`中 `line639、line748、line754、line755`的代码注释。
 - 第一阶段训练使用`train.sh`脚本。
-- 本阶段使用了dynamic mask，所以第一阶段训练过后的最优模型具有较大随机性。
+- 本阶段使用了dynamic mask，所以第一阶段训练所能得到的最优模型具有较大随机性。
 ### 第二阶段训练
 - 请注释`train.py`中`line388-line412`，关闭动态加噪。
 - 请注意`train.py`中 `line639、line748、line754、line755`的代码注释。
